@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Glow up – Ayuda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Merriweather', serif;
+      background: #f5f0e6;
+      color: #333;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      background-color: #f1d8c2;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    }
+
+    #logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #080808;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.7rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      font-size: 1.5rem;
+      position: relative;
+    }
+
+    nav a.active::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #333;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+    }
+
+    details {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    summary {
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details[open] summary::after {
+      content: "−";
+      float: right;
+      font-size: 1.2rem;
+    }
+
+    summary::after {
+      content: "+";
+      float: right;
+      font-size: 1.2rem;
+    }
+
+    p, ul {
+      font-weight: 400;
+      line-height: 1.6;
+      padding-left: 10px;
+    }
+
+    ul {
+      padding-left: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div id="logo">Glow up</div>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="tienda_.html">Tienda</a>
+      <a href="contactos.html">Contacto</a>
+      <a href="ayuda.html" class="active">Ayuda</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>¿Necesitas ayuda?</h1>
+
+    <details>
+      <summary>¿Cómo selecciono talla y color correctamente?</summary>
+      <p>En cada producto de la tienda encontrarás los botones para elegir talla (S, M, L) y color. Debes seleccionar ambas opciones antes de añadirlo al carrito.</p>
+    </details>
+
+    <details>
+      <summary>¿Qué ocurre después de hacer clic en “Añadir al carrito”?</summary>
+      <p>Se guardará tu selección y se mostrará un mensaje de confirmación. Puedes revisar todos los productos añadidos desde el botón del carrito en la barra superior.</p>
+    </details>
+
+    <details>
+      <summary>¿Puedo restablecer los corazones marcados?</summary>
+      <p>Sí. Una vez que finalizas una compra y cierras el mensaje emergente, todos los corazones seleccionados se reinician automáticamente.</p>
+    </details>
+
+    <details>
+      <summary>¿Qué pasa si olvidé seleccionar talla o color?</summary>
+      <p>El sistema te mostrará una alerta para que selecciones ambas opciones antes de continuar. Esto ayuda a evitar errores en el pedido.</p>
+    </details>
+
+    <details>
+      <summary>¿Dónde puedo ver información de contacto o redes sociales?</summary>
+      <p>Visita la página de <a href="contacto.html">Contacto</a> para acceder a nuestras redes sociales, como Instagram y WhatsApp. Allí también puedes comunicarte con atención al cliente.</p>
+    </details>
+  </main>
+
+</body>
+</html>
