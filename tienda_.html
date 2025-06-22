@@ -276,20 +276,18 @@
         font-weight: bold;
     }
         /* Acomoda sólo los enlaces de navegación en una fila */
-    nav {
-      display: inline-flex;   /* o flex si prefieres que ocupe todo el ancho posible */
-      gap: 1.5rem;            /* espacio entre cada enlace */
-      padding: 0;             /* elimina márgenes/paddings que interfieran */
-      margin: 0;
+     nav {
+      display: flex;
+      gap: 1.5rem;
     }
 
     /* Quita subrayado y aplica márgenes sólo a los <a> */
     nav a {
-        text-decoration: none;
-        color: #333;
-        font-weight: 600;
-        font-size: 1.5rem;
-        position: relative;
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      font-size: 1.3rem;
+      position: relative;
     }
     nav a.active {
       border-bottom: 2px solid currentColor;
@@ -318,6 +316,7 @@ nav {
           <a href="index.html">Inicio</a>
           <a href="tienda_.html">Tienda</a>
           <a href="contactos.html">Contactos</a>
+          <a href="ayuda.html" class="active">Ayuda</a>
           </nav>
         <div id="cart-btn">🛒<span id="cart-count">0</span></div>
     </header>
