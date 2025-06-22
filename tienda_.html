@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Glow up – Tienda en Línea</title>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Merriweather', serif;
+      background: #f5f0e6;
+      color: #333;
+    }
+    h1 { text-align: center; margin: 20px 0; }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #f1d8c2;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+    }
+    #logo {
+      font-size: 1.5em;
+      font-weight: 700;
+    }
+    #cart-btn {
+      position: relative;
+      font-size: 1.5em;
+      cursor: pointer;
+      user-select: none;
+    }
+    #cart-count {
+      position: absolute;
+      top: -8px;
+      right: -12px;
+      background: rgb(253, 106, 136);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8em;
+    }
+    @keyframes desactivarLike {
+        0%   { transform: scale(1.2); color: crimson; opacity: 1; }
+        50%  { transform: scale(0.9); color: #999; opacity: 0.5; }
+        100% { transform: scale(1);   color: #666; opacity: 1; }
+    }
+    .like.desactivando {
+        animation: desactivarLike 0.5s ease;
+    }
+
+
+    .contenedor {
+      display: flex;
+      padding: 0 30px 20px;
+      gap: 30px;
+    }
+    .filtros {
+        width: 250px;
+        background: #faf9f8;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        height: fit-content;
+        max-height: 360px; /* ajusta este número a lo que se vea mejor */
+        overflow: hidden;
+
+    }
+
+    
+    .filtros h3 { margin-bottom: 10px; }
+    .filtros section + section { margin-top: 20px; }
+    .color-circle {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+    .tallas span {
+      display: inline-block;
+      margin-right: 5px;
+      padding: 5px 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .tallas span:hover { background: #eee; }
+
+    .productos {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+    }
+    .producto {
+      position: relative;
+      background: #fff;
+      border: 2px solid #eee;
+      border-radius: 10px;
+      padding: 10px;
+      height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      transition: transform .2s;
+    }
+    .producto:hover { transform: translateY(-4px); }
+    .producto img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .precio {
+      color: crimson;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    .like {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.4em;
+      color: #666;
+      cursor: pointer;
+      user-select: none;
+      transition: color .2s;
+    }
+    .like.liked { color: crimson; }
+    @keyframes desactivarLike {
+        0%   { transform: scale(1.2); color: crimson; opacity: 1; }
+        50%  { transform: scale(0.9); color: #999; opacity: 0.5; }
+        100% { transform: scale(1);   color: #666; opacity: 1; }
+    }
+
+    .like.desactivando {
+        animation: desactivarLike 0.5s ease;
+    }
+    .like:not(.liked) {
+        color: #666 !important;
+    }
+
+
+    .btn {
+      background: #87c0fd;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      font-family: inherit;
+      transition: background .2s;
+    }
+    .btn:hover { background: #0056b3; }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background: #fff;
+      width: 85%;
+      max-width: 700px;
+      border-radius: 10px;
+      padding: 30px;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+
+    #cart-items .item {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    #cart-items img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+    #cart-items .info h4 {
+      margin: 0;
+      font-size: 1em;
+    }
+    #cart-items .info p {
+      margin: 4px 0;
+      color: crimson;
+    }
+    #cart-total {
+      text-align: right;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+
+    #checkout-form input,
+    #checkout-form textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #success-modal h2 {
+    color: green;
+    text-align: center;
+    margin-bottom: 10px;
+    }
+    #success-modal p {
+    text-align: center;
+    margin-bottom: 20px;
+    }
+    .hidden { display: none !important; }
+    /* Estilos para la sección de opciones del producto */
+    .selector-opciones {
+        margin-top: 10px;
+    }
+
+    .selector-opciones .opcion {
+        margin-bottom: 10px;
+    }
+
+    .selector-opciones p {
+        margin: 0 0 5px;
+        font-weight: bold;
+        font-size: 0.9em;
+    }
+
+    /* Estilos para los botones de color y talla */
+    .opcion-color,
+    .opcion-talla {
+        padding: 8px 12px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        background-color: #f0f0f0;
+        transition: background-color 0.3s;
+    }
+    .opcion-color.selected,
+    .opcion-talla.selected {
+        background-color: #ddd;
+        font-weight: bold;
+    }
+        /* Acomoda sólo los enlaces de navegación en una fila */
+    nav {
+      display: inline-flex;   /* o flex si prefieres que ocupe todo el ancho posible */
+      gap: 1.5rem;            /* espacio entre cada enlace */
+      padding: 0;             /* elimina márgenes/paddings que interfieran */
+      margin: 0;
+    }
+
+    /* Quita subrayado y aplica márgenes sólo a los <a> */
+    nav a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 600;
+        font-size: 1.5rem;
+        position: relative;
+    }
+    nav a.active {
+      border-bottom: 2px solid currentColor;
+    }
+    header {
+  position: relative;        /* para que el nav absolute se ancle aquí */
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+}
+nav {
+  position: absolute;
+  right: 80px;               /* ajusta este valor a tu gusto */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 1.5rem;
+}
+
+  </style>
+ </head>
+ <body>
+    <header>
+        <div id="logo">Glow up</div>
+          <nav>
+          <a href="index.html">Inicio</a>
+          <a href="tienda_.html">Tienda</a>
+          <a href="contactos.html">Contactos</a>
+          </nav>
+        <div id="cart-btn">🛒<span id="cart-count">0</span></div>
+    </header>
+
+  <h1>Catálogo Glow up</h1>
+
+  <div class="contenedor">
+    <div class="filtros">
+      <section>
+        <h3>Color</h3>
+        <div>
+          <span class="color-circle" style="background:green;"></span>
+          <span class="color-circle" style="background:blue;"></span>
+          <span class="color-circle" style="background:red;"></span>
+          <span class="color-circle" style="background:yellow;"></span>
+          <span class="color-circle" style="background:orange;"></span>
+          <span class="color-circle" style="background:pink;"></span>
+          <span class="color-circle" style="background:black;"></span>
+          <span class="color-circle" style="background:white;"></span>
+          <span class="color-circle" style="background:gray;"></span>
+        </div>
+      </section>
+      <section>
+        <h3>Talla</h3>
+        <div class="tallas">
+          <span>S</span><span>M</span><span>L</span><span>XL</span>
+        </div>
+      </section>
+      <div style="margin-top: 25px; text-align: center;">
+        <button id="ver-carrito" class="btn">🛒 Ver mi carrito</button>
+      </div>
+    </div>
+
+    <div class="productos">
+      <!-- Aquí van tus productos -->
+       <!-- PRODUCTOS ACOMODADOS -->
+ <div class="producto"
+     data-name="Chamarra"
+     data-price="350"
+     data-img="https://http2.mlstatic.com/D_NQ_NP_676747-MLM76497949707_052024-O-chamarra-de-piel-caballero-modelo-universitaria.webp">
+  <div class="like">♥</div>
+  <img src="https://http2.mlstatic.com/D_NQ_NP_676747-MLM76497949707_052024-O-chamarra-de-piel-caballero-modelo-universitaria.webp" alt="Chamarra">
+  <div class="precio">$350</div>
+  <h4>Chamarra</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Chamarra deportiva"
+     data-price="300"
+     data-img="https://jrwestern.com.mx/wp-content/uploads/2023/10/Chamarra-Ariat-10028257-Softshell-Jkt-1.png">
+  <div class="like">♥</div>
+  <img src="https://jrwestern.com.mx/wp-content/uploads/2023/10/Chamarra-Ariat-10028257-Softshell-Jkt-1.png" alt="Chamarra deportiva">
+  <div class="precio">$300</div>
+  <h4>Chamarra deportiva</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Chamarra de piel"
+     data-price="500"
+     data-img="https://kovparts.com/cdn/shop/products/chamarra1_2b511037-ff30-4cc2-ab62-a431a974e214.png?v=1708966673">
+  <div class="like">♥</div>
+  <img src="https://kovparts.com/cdn/shop/products/chamarra1_2b511037-ff30-4cc2-ab62-a431a974e214.png?v=1708966673" alt="Chamarra de piel">
+  <div class="precio">$500</div>
+  <h4>chamarra de piel</h4>
+ </div>
+ <div class="producto"
+     data-name="Chamarra de cuero"
+     data-price="600"
+     data-img="https://http2.mlstatic.com/D_NQ_NP_658558-MLM71778720226_092023-O-chamarra-piel-borrego-perforada-hombre-color-negro-c-96.webp">
+  <div class="like">♥</div>
+  <img src="https://http2.mlstatic.com/D_NQ_NP_658558-MLM71778720226_092023-O-chamarra-piel-borrego-perforada-hombre-color-negro-c-96.webp" alt="Chamarra de cuero">
+  <div class="precio">$600</div>
+  <h4>Chamarra de cuero</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Pantalón de mezclilla"
+     data-price="300"
+     data-img="https://yazbek.com.mx/cdn/shop/files/D0651-pantalon-mezclilla-dama-100algodon-indigo-oscuro_1.jpg?v=1734474218">
+  <div class="like">♥</div>
+  <img src="https://yazbek.com.mx/cdn/shop/files/D0651-pantalon-mezclilla-dama-100algodon-indigo-oscuro_1.jpg?v=1734474218" alt="Pantalón de mezclilla">
+  <div class="precio">$300</div>
+  <h4>Pantalón de mezclilla</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Pantalón de mezclilla"
+     data-price="300"
+     data-img="https://passionpromocional.com/cdn/shop/products/Diapositiva2_a1c16a36-66f7-427d-9e34-5197115b0bc4_800x.jpg?v=1628979193">
+  <div class="like">♥</div>
+  <img src="https://passionpromocional.com/cdn/shop/products/Diapositiva2_a1c16a36-66f7-427d-9e34-5197115b0bc4_800x.jpg?v=1628979193" alt="Pantalón de mezclilla">
+  <div class="precio">$300</div>
+  <h4>Pantalón de mezclilla</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Pantalón de vestir"
+     data-price="300"
+     data-img="https://www.flashy.com.co/cdn/shop/files/pantalon-wide-leg-tipo-sastre-fulvia-2_grande.jpg?v=1722522082">
+  <div class="like">♥</div>
+  <img src="https://www.flashy.com.co/cdn/shop/files/pantalon-wide-leg-tipo-sastre-fulvia-2_grande.jpg?v=1722522082" alt="Pantalón de vestir">
+  <div class="precio">$300</div>
+  <h4>Pantalón de vestir</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Blusa cruzada"
+     data-price="200"
+     data-img="https://surtidoradepartamental.vteximg.com.br/arquivos/ids/628179/010000153518_1.jpg?v=638598240438600000">
+  <div class="like">♥</div>
+  <img src="https://surtidoradepartamental.vteximg.com.br/arquivos/ids/628179/010000153518_1.jpg?v=638598240438600000" alt="Blusa cruzada">
+  <div class="precio">$200</div>
+  <h4>Blusa cruzada</h4>
+ </div>
+ <div class="producto"
+     data-name="Blusa lisa"
+     data-price="200"
+     data-img="https://i5.walmartimages.com/asr/90152b11-2c1e-4497-9a7d-c7b28156aa58.19651e51440d732cfc6ed6249e628f92.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF">
+   <div class="like">♥</div>
+   <img src="https://i5.walmartimages.com/asr/90152b11-2c1e-4497-9a7d-c7b28156aa58.19651e51440d732cfc6ed6249e628f92.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF" alt="Blusa lisa">
+  <div class="precio">$200</div>
+  <h4>Blusa lisa</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Blusa primaveral"
+     data-price="200"
+     data-img="https://ae-pic-a1.aliexpress-media.com/kf/S0dc4712b23304cc1ae41fd93b95e54c0U.jpg">
+   <div class="like">♥</div>
+   <img src="https://ae-pic-a1.aliexpress-media.com/kf/S0dc4712b23304cc1ae41fd93b95e54c0U.jpg" alt="Blusa primaveral">
+   <div class="precio">$200</div>
+   <h4>Blusa primaveral</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Blusa estampada"
+     data-price="200"
+     data-img="https://www.flashy.com.co/cdn/shop/files/blusa-manga-corta-de-animal-print-con-mangas-embobadas-y-anudados-en-frente-mujer-flashy-amelia6_grande.jpg?v=1741813774">
+     <div class="like">♥</div>
+     <img src="https://www.flashy.com.co/cdn/shop/files/blusa-manga-corta-de-animal-print-con-mangas-embobadas-y-anudados-en-frente-mujer-flashy-amelia6_grande.jpg?v=1741813774" alt="Blusa estampada">
+     <div class="precio">$200</div>
+     <h4>Blusa estampada</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Vestido elegante"
+     data-price="300"
+     data-img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjBQV0NTrVacljoT9IxgZwOaZtacTt-TjCDw&s">
+     <div class="like">♥</div>
+     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjBQV0NTrVacljoT9IxgZwOaZtacTt-TjCDw&s" alt="Vestido elegante">
+     <div class="precio">$300</div>
+     <h4>Vestido elegante</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Vestido casual"
+     data-price="300"
+     data-img="https://i5.walmartimages.com.mx/mg/gm/3pp/asr/d7782503-da8c-453f-a239-04b7d1f50655.f3d728d21d55c849e45d8db9beafa8fb.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF">
+  <div class="like">♥</div>
+  <img src="https://i5.walmartimages.com.mx/mg/gm/3pp/asr/d7782503-da8c-453f-a239-04b7d1f50655.f3d728d21d55c849e45d8db9beafa8fb.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF" alt="Vestido casual">
+  <div class="precio">$300</div>
+  <h4>Vestido casual</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Vestido a cuadros"
+     data-price="300"
+     data-img="https://i.pinimg.com/236x/9b/25/0d/9b250d54e0f58a45e1f7671811674ce7.jpg">
+  <div class="like">♥</div>
+  <img src="https://i.pinimg.com/236x/9b/25/0d/9b250d54e0f58a45e1f7671811674ce7.jpg" alt="Vestido a cuadros">
+  <div class="precio">$300</div>
+  <h4>Vestido a cuadros</h4>
+ </div>
+
+ <div class="producto"
+     data-name="Vestido formal"
+     data-price="350"
+     data-img="https://i5.walmartimages.com/asr/0b41e24d-24e8-4cbe-83da-ecce450eac62.7bfec2164b6d0408c73aab48df95b601.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF">
+  <div class="like">♥</div>
+  <img src="https://i5.walmartimages.com/asr/0b41e24d-24e8-4cbe-83da-ecce450eac62.7bfec2164b6d0408c73aab48df95b601.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF" alt="Vestido formal">
+  <div class="precio">$350</div>
+  <h4>Vestido formal</h4>
+ </div>
+    </div>
+ </div>
+ </form>
+ </div>
+ </div>
+
+    </div>
+  </div>
+    <!-- MODAL DEL CARRITO -->
+  <div id="cart-modal" class="modal">
+    <div class="modal-content">
+      <span id="close-cart" class="close-modal">&times;</span>
+      <h2>Tu carrito</h2>
+      <div id="cart-items"></div>
+      <div id="cart-total"></div>
+      <button id="checkout-btn" class="btn hidden">Realizar compra</button>
+      <form id="checkout-form" class="hidden">
+        <h3>Datos para envío</h3>
+        <input type="text" id="name" placeholder="Nombre completo" required />
+        <input type="email" id="email" placeholder="Correo electrónico" required />
+        <textarea id="address" rows="3" placeholder="Dirección de envío" required></textarea>
+        <button type="submit" class="btn">Confirmar compra</button>
+      </form>
+    </div>
+  </div>
+  <!-- MODAL DE ÉXITO -->
+ <div id="success-modal" class="modal">
+  <div class="modal-content">
+    <span id="close-success" class="close-modal">&times;</span>
+    <h2>¡Gracias por tu compra!</h2>
+    <p>Tu pedido ha sido procesado exitosamente.</p>
+    <button id="success-ok" class="btn">Cerrar</button>
+
+  </div>
+ </div>
+
+
+
+  <!-- JAVASCRIPT -->
+  <script>
+    const cartBtn       = document.getElementById('cart-btn'),
+          cartCount     = document.getElementById('cart-count'),
+          cartModal     = document.getElementById('cart-modal'),
+          closeCart     = document.getElementById('close-cart'),
+          cartItemsEl   = document.getElementById('cart-items'),
+          cartTotalEl   = document.getElementById('cart-total'),
+          checkoutBtn   = document.getElementById('checkout-btn'),
+          checkoutForm  = document.getElementById('checkout-form'),
+          successModal  = document.getElementById('success-modal'),
+          closeSuccess  = document.getElementById('close-success'),
+          successOk     = document.getElementById('success-ok'),
+          productosCont = document.querySelector('.productos'),
+          verCarritoBtn = document.getElementById('ver-carrito');
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+ 
+ productosCont.addEventListener('click', e => {
+  if (!e.target.classList.contains('like')) return;
+
+  const icon = e.target;
+  const card = icon.closest('.producto');
+
+  const item = {
+    name:  card.dataset.name,
+    price: +card.dataset.price,
+    img:   card.dataset.img
+  };
+
+  if (icon.classList.toggle('liked')) {
+    cart.push(item);
+  } else {
+    cart = cart.filter(i => i.name !== item.name);
+  }
+
+  updateCartUI();
+ });
+    function updateCartUI() {
+      cartCount.textContent = cart.length;
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    function renderCart() {
+      cartItemsEl.innerHTML = '';
+      cart.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}">
+          <div class="info">
+            <h4>${item.name}</h4>
+            <p>$${item.price}</p>
+          </div>`;
+        cartItemsEl.appendChild(div);
+      });
+      const total = cart.reduce((sum, i) => sum + i.price, 0);
+      cartTotalEl.textContent = cart.length
+        ? `Total: $${total}`
+        : 'Tu carrito está vacío';
+      checkoutBtn.classList.toggle('hidden', cart.length === 0);
+      cartTotalEl.classList.toggle('hidden', cart.length === 0);
+      checkoutForm.classList.add('hidden');
+    }
+    function resetHearts() {
+        // Selecciona todos los elementos "like" que tengan la clase "liked"
+        const heartElements = document.querySelectorAll('.like.liked');
+        
+        heartElements.forEach(icon => {
+        // Remueve la clase que aplica el estilo "rojo"
+        icon.classList.remove('liked');    
+        // Fuerza el color gris usando !important para asegurarnos que se aplique
+        icon.style.setProperty('color', '#666', 'important');        
+        // (Opcional) Muestra en consola para depuración
+        console.log('Se ha reseteado el corazón:', icon);
+     });
+    }
+    // Abrir carrito desde ícono y botón lateral
+    cartBtn.addEventListener('click', () => {
+      renderCart();
+      cartModal.classList.add('active');
+    });
+    verCarritoBtn.addEventListener('click', () => {
+      renderCart();
+       cartModal.classList.add('active');
+ });
+
+ // Cierra con el botón ✕
+ closeCart.addEventListener('click', () => {
+  cartModal.classList.remove('active');
+ });
+
+ // Cierra si haces clic fuera del recuadro
+ cartModal.addEventListener('click', e => {
+  if (e.target === cartModal) {
+    cartModal.classList.remove('active');
+   }
+ });
+ // Abrir formulario de envío
+ checkoutBtn.addEventListener('click', () => {
+  checkoutForm.classList.remove('hidden');
+ });
+
+ // Enviar formulario y mostrar modal de éxito
+ checkoutForm.addEventListener('submit', e => {
+  e.preventDefault();
+  if (!checkoutForm.checkValidity()) {
+    alert('Por favor llena todos los campos.');
+    return;
+  }
+    closeSuccess.addEventListener('click', () => {
+        successModal.style.display = 'none';
+    });
+
+    successOk.addEventListener('click', () => {
+        successModal.style.display = 'none';
+    });
+    closeSuccess.addEventListener('click', () => {
+        // Código para ocultar el modal o finalizar la compra...
+        successModal.style.display = 'none';
+        // Se reinician los corazones
+        resetHearts();
+    });
+
+    successOk.addEventListener('click', () => {
+        // Código para ocultar el modal o finalizar la compra...
+        successModal.style.display = 'none';
+        // Se reinician los corazones
+        resetHearts();
+    });
+  // Limpia carrito y muestra el modal de éxito
+  cartModal.classList.remove('active');
+  successModal.classList.add('active');
+  cart = [];
+  updateCartUI();
+ });
+    document.querySelectorAll('.like.liked').forEach(icon => {
+            icon.classList.add('desactivando');
+        setTimeout(() => {
+            icon.classList.remove('liked');
+            icon.style.color = '#666';
+            icon.classList.remove('desactivando');
+        }, 500);
+    });
+ // Cerrar modal de éxito con botón o X
+ closeSuccess.addEventListener('click', () => {
+    successModal.classList.remove('active');
+ });
+ successOk.addEventListener('click', () => {
+    successModal.classList.remove('active');
+ });
+ successModal.addEventListener('click', e => {
+    if (e.target === successModal) successModal.classList.remove('active');
+ });
+ updateCartUI();
+  </script>
+ </body>
+</html>
